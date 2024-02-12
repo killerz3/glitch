@@ -1,7 +1,7 @@
 
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { getServerSession } from "next-auth";
-import { redirect } from "next/dist/server/api-utils";
+import { redirect } from "next/navigation";
 import "./globals.css";
 import Providers from "./providers";
 // export const metadata = {
