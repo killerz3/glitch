@@ -20,8 +20,7 @@ export default async function RootLayout({
   children: React.ReactNode;
   }) {
   
-  const session = await getServerSession(authOptions)
-  if(session?.user)redirect("/Home")
+
   return (
     <html data-theme="cupcake" lang="en">
       {" "}
