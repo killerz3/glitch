@@ -40,7 +40,7 @@ function Page() {
         transition={{ duration: 1.5 }}
       >
         <Timer />
-        <Timer2/>
+        {/* <Timer2/> */}
       </motion.div>
     </div>
   );
