@@ -4,48 +4,53 @@ import { useRouter, usePathname } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { TfiClose } from "react-icons/tfi";
-import { Button } from "./Button";
+import useTimerStore from "./timerstore";
 
 function Timer() {
   const [hours, setHours] = useState<number>(0);
   const [minutes, setMinutes] = useState<number>(0);
   const [seconds, setSeconds] = useState<number>(0);
-  const [TimerStatus, setTimerStatus] = useState<boolean>(false);
+
   const [checked, setChecked] = useState(false);
   const [date, setdate] = useState(new Date());
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-
+  const { setTimerStatus, timerStatus } = useTimerStore()
+  const [GlobalTime, setGlobalTime] = useState(0)
   const [efficiency, setEfficiency] = useState<any>();
+
+  const [StartTime, setStartTime] = useState(0)
 
   const router = useRouter();
   const { data: session } = useSession();
-  const pathname = usePathname();
   const TimeRef = useRef<any>();
   const handleStart = () => {
     setTimerStatus(true);
-    let startTime = Date.now();
-    
-    const updateTimer = () => {
-      const currentTime = Date.now();
-      const elapsedTime = currentTime - startTime;
-
-      const totalSeconds = Math.floor(elapsedTime / 1000);
-      const hours = Math.floor(totalSeconds / 3600);
-      const minutes = Math.floor((totalSeconds % 3600) / 60);
-      const seconds = Math.floor(totalSeconds % 60);
-
-      setHours(hours);
-      setMinutes(minutes);
-      setSeconds(seconds);
-
-      if (TimerStatus) {
-        requestAnimationFrame(updateTimer);
-      }
-    };
-
-    requestAnimationFrame(updateTimer);
+    setStartTime(Math.floor(Date.now() / 1000));
   };
+
+  useEffect(() => {
+    let interval: any;
+    if (timerStatus) {
+      interval = setInterval(() => {
+        const currentTime = Math.floor(Date.now() / 1000);
+        const elapsedTime = currentTime - StartTime;
+
+        const hours = Math.floor(elapsedTime / 3600);
+        const minutes = Math.floor((elapsedTime % 3600) / 60);
+        const seconds = elapsedTime % 60;
+
+        setHours(hours);
+        setMinutes(minutes);
+        setSeconds(seconds);
+      }, 1000);
+    } else {
+      clearInterval(interval);
+    }
+
+    return () => clearInterval(interval);
+  }, [timerStatus, StartTime]);
+
 
   const handleModalSubmit = async () => {
     await axios.post("/api/AddSession", {
@@ -70,6 +75,10 @@ function Timer() {
     setMinutes(0);
     setSeconds(0);
   };
+
+  // useEffect(() => {
+  //   console.log("TimerStatus after update:", TimerStatus); // Log inside useEffect to check the updated value
+  // }, []);
 
   return (
     <div className="">
@@ -98,14 +107,14 @@ function Timer() {
       </div>
       <div className="mt-4 flex items-center justify-center transition-all duration-500">
         <button
-          onClick={TimerStatus ? handleEnd : handleStart}
-          className={`btn ${TimerStatus ? "btn-warning" : "btn-primary"}`}
+          onClick={timerStatus ? handleEnd : handleStart}
+          className={`btn ${timerStatus ? "btn-warning" : "btn-primary"}`}
         >
-          {TimerStatus
+          {timerStatus
             ? "pause"
             : seconds > 0 || minutes > 0 || hours > 0
-            ? "resume"
-            : "start"}
+              ? "resume"
+              : "start"}
         </button>
 
         {(seconds > 0 || minutes > 0 || hours > 0) && (

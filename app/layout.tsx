@@ -1,4 +1,7 @@
 
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/dist/server/api-utils";
 import "./globals.css";
 import Providers from "./providers";
 // export const metadata = {
@@ -11,11 +14,14 @@ export const metadata = {
     icon: '/icon.png',
   },
 };
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
-}) {
+  }) {
+  
+  const session = await getServerSession(authOptions)
+  if(session?.user)redirect("/Home")
   return (
     <html data-theme="cupcake" lang="en">
       {" "}

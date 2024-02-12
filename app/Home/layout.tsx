@@ -1,24 +1,14 @@
-"use client"
+
+import { authOptions } from '@/pages/api/auth/[...nextauth]'
+import { getServerSession } from 'next-auth'
 import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
-import React, { useEffect } from 'react'
+import { redirect, useRouter } from 'next/navigation'
 
-export default function Layout({ children }: any) {
-    const { data: session } = useSession()
-    const router = useRouter()
-    console.log("aaaaaaa",session);
-    
-    useEffect(() => {
-      
-    
-        if (!session?.user) {
-            router.replace("/")
 
-          }
-      
-    }, [])
-    
+export default async function Layout({ children }: any) {
+    const session= await getServerSession(authOptions)
 
+    if(!session?.user)redirect("/")
   return (
       <div>{children}</div>
   )
