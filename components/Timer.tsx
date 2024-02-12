@@ -24,23 +24,27 @@ function Timer() {
   const TimeRef = useRef<any>();
   const handleStart = () => {
     setTimerStatus(true);
-    TimeRef.current = setInterval(() => {
-      setSeconds((seconds) => {
-        const newSeconds = seconds + 1;
-        if (newSeconds === 60) {
-          setMinutes((minutes) => {
-            const newMinutes = minutes + 1;
-            if (newMinutes === 60) {
-              setHours((hours) => hours + 1);
-              return 0;
-            }
-            return newMinutes;
-          });
-          return 0;
-        }
-        return newSeconds;
-      });
-    }, 1000);
+    let startTime = Date.now();
+    
+    const updateTimer = () => {
+      const currentTime = Date.now();
+      const elapsedTime = currentTime - startTime;
+
+      const totalSeconds = Math.floor(elapsedTime / 1000);
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = Math.floor(totalSeconds % 60);
+
+      setHours(hours);
+      setMinutes(minutes);
+      setSeconds(seconds);
+
+      if (TimerStatus) {
+        requestAnimationFrame(updateTimer);
+      }
+    };
+
+    requestAnimationFrame(updateTimer);
   };
 
   const handleModalSubmit = async () => {

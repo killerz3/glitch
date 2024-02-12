@@ -3,6 +3,7 @@ import React from "react";
 import { Button } from "@/components/Button";
 import { signIn, useSession } from "next-auth/react";
 import Timer from "./Timer";
+import Timer2  from "../components/Timer"
 import { useRouter } from "next/navigation";
 import SignInButton from "./signinButton";
 import { motion } from "framer-motion";
@@ -39,6 +40,7 @@ function Page() {
         transition={{ duration: 1.5 }}
       >
         <Timer />
+        <Timer2/>
       </motion.div>
     </div>
   );

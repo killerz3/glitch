@@ -4,28 +4,27 @@
 generator client {
   provider = "prisma-client-js"
 }
+
 datasource db {
-  provider = "mysql"
-  url = env("DATABASE_URL")
-  relationMode = "prisma"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model StudySession {
-  id          String   @default(uuid()) @unique
-  time        Int 
+  id          String   @unique @default(uuid())
+  time        Int
   efficiency  Int
   description String?
   title       String
-  userEmail   String 
+  userEmail   String
   isPublic    Boolean?
-  user        User @relation(fields: [userEmail],references: [email])
+  user        User     @relation(fields: [userEmail], references: [email])
 }
 
-
 model User {
-  id            String    @id @default(cuid()) 
+  id            String         @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?        @unique
   emailVerified DateTime?
   image         String?
   xp            Int?
